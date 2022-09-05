@@ -32,6 +32,7 @@ def download_shapefile(base_url_shapefile, output_dir, year, stats_area):
     url_download = f'{base_url_shapefile}{stats_area}_{year}_AUST_SHP_GDA2020.zip'
     print(url_download)
     urlretrieve(url_download, f'{output_dir}/{stats_area}shapefile_{year}.csv')
- 
 
+
+download_income_file(base_url_income, output_dir, 2021, 'AUS')
 download_shapefile(base_url_shapefile, output_dir, 2021, 'SA2')
