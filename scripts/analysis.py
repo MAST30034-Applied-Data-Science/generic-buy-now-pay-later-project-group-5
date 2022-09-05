@@ -2,7 +2,7 @@ from pyspark.sql import SparkSession, functions as f
 import geopandas as gpd
 
 # Read in transactions data
-transactions = spark.read.parquet('../data/tables/transactions_20210228_20210827_snapshot')
+transactions = ps.read.parquet('../data/tables/transactions_20210228_20210827_snapshot')
 
 transactions.createOrReplaceTempView("transactions")
 
