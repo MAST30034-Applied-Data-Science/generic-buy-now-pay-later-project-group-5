@@ -9,6 +9,9 @@ output_dir = '../data/tables'
 base_url_income = "https://www.abs.gov.au/census/find-census-data/datapacks/download/"
 base_url_shapefile = "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/digital-boundary-files/"
 
+# Want population, education, income
+# Identified age as an important grouping category because young people seem more likely to use afterpay
+
 
 # download external data
 def download_income_file(base_url_income, output_dir, year, location):
