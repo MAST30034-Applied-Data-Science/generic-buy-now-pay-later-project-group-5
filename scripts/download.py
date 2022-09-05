@@ -26,7 +26,7 @@ def download_income_file(base_url_income, output_dir, year, location):
     # retrieving datasets from the new york taxi websit for each month
     url_download = f'{base_url_income}{year}_GCP_all_for_{location}_short-header.zip'
     print(url_download)
-    urlretrieve(url_download, f'{output_dir}/{location}_{year}.csv')
+    urlretrieve(url_download, f'{output_dir}/{location}_{year}.zip')
 
 
 # download external data
