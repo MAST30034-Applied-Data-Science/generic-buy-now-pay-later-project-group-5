@@ -40,6 +40,6 @@ joined_data = transactions.join(tbl_merchants,['merchant_abn'],JOIN_TYPE)\
             .join(cons_user_details, ['user_id'],JOIN_TYPE)\
             .join(tbl_consumers.withColumnRenamed('name', 'consumer_name'), ['consumer_id'],JOIN_TYPE)
 
-#joined_data.show(1, vertical = True, truncate = False)
+joined_data.show(1, vertical = True, truncate = False)
     
 joined_data.write.mode('overwrite').parquet('../data/curated/joined_data.parquet')
