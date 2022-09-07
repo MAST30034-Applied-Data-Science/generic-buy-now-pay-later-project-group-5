@@ -25,7 +25,7 @@ def download_income_file(base_url_income, output_dir, year, location):
     
     # retrieving datasets from the new york taxi websit for each month
     url_download = f'{base_url_income}{year}_GCP_all_for_{location}_short-header.zip'
-    print(url_download)
+    # print(url_download)
     urlretrieve(url_download, f'{output_dir}/{location}_{year}.zip')
 
 
@@ -37,7 +37,7 @@ def download_shapefile(base_url_shapefile, output_dir, year, stats_area):
     
     # retrieving datasets from the new york taxi websit for each month
     url_download = f'{base_url_shapefile}{stats_area}_{year}_AUST_SHP_GDA2020.zip'
-    print(url_download)
+    # print(url_download)
     urlretrieve(url_download, f'{output_dir}/{stats_area}shapefile_{year}.csv')
     
 # download 2016 SA2 to 2021 SA2 correspondence  
