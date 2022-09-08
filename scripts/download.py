@@ -5,7 +5,7 @@ certifi.where()
 import requests, zipfile, io
 
 # setting directoray for downloading datasets
-output_dir = '../data/external'
+output_dir = '../data/tables'
 # base url where the HVFHV datasets are from
 base_url_income = "https://www.abs.gov.au/census/find-census-data/datapacks/download/"
 base_url_shapefile = "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/digital-boundary-files/"
