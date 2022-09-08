@@ -13,9 +13,9 @@ spark = (
     .getOrCreate()
 )
 
-# Using OUTER JOIN for now, may want to change this eventually
+# Using LEFT JOIN so that only data with orders is used
 
-JOIN_TYPE = "outer"
+JOIN_TYPE = "left"
 
 transactions = spark.read.parquet('../data/tables/transactions_20210228_20210827_snapshot')
 cons_user_details = spark.read.parquet('../data/tables/consumer_user_details.parquet')
@@ -23,7 +23,6 @@ tbl_merchants = spark.read.parquet('../data/tables/tbl_merchants.parquet')
 tbl_consumers = spark.read.options(delimiter='|').csv('../data/tables/tbl_consumer.csv', header = True)
 
 # Convert tags to lowercase, remove unwanted characters, and split text into array
-
 
 tbl_merchants = tbl_merchants.withColumn('tags', f.lower(f.col('tags')))
 tbl_merchants = tbl_merchants.withColumn('tags', f.regexp_replace('tags', r'[\(\)\[\]]', ''))
@@ -40,6 +39,6 @@ joined_data = transactions.join(tbl_merchants,['merchant_abn'],JOIN_TYPE)\
             .join(cons_user_details, ['user_id'],JOIN_TYPE)\
             .join(tbl_consumers.withColumnRenamed('name', 'consumer_name'), ['consumer_id'],JOIN_TYPE)
 
-joined_data.show(1, vertical = True, truncate = False)
+joined_data.show(10, vertical = True, truncate = False)
     
 joined_data.write.mode('overwrite').parquet('../data/curated/joined_data.parquet')
