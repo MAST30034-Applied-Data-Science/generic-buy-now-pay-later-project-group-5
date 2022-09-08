@@ -57,6 +57,8 @@ df_sa2 = df_sa2.drop(*drop_columns)
 
 final_data = df_sa2.join(external_data, ["SA2_CODE_2021"], "outer")
 
+external_data.write.mode('overwrite').parquet('../data/curated/external_data.parquet')
+
 final_data.write.mode('overwrite').parquet('../data/curated/final_data.parquet')
 
 
