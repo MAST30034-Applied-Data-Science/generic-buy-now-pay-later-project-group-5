@@ -134,3 +134,13 @@ data/raw/
 
 # OSX .DS_Store file
 .DS_Store
+data/tables/AUS_2021.zip
+*.csv
+*.zip
+*.xlsx
+data/external/Readme/2021AboutDatapacks_readme.txt
+data/external/Readme/mapinfo_Shp_readme.txt
+data/external/Readme/esri_arcmap_readme.txt
+data/external/Readme/CreativeCommons_Licensing_readme.txt
+data/external/Readme/2021POA_readme.txt
+data/external/Readme/2021Formats_readme.txt
