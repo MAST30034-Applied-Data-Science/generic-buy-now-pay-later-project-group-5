@@ -12,6 +12,7 @@ base_url_shapefile = "https://www.abs.gov.au/statistics/standards/australian-sta
 url_sa2_correspondence = "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/correspondences/CG_SA2_2016_SA2_2021.csv"
 url_coding_index = "https://data.gov.au/data/dataset/1646f764-82ad-4c21-b49c-63480f425a4a/resource/c6051960-6012-452c-ac68-dba55a1f837a/download/asgs2016codingindexes.zip"
 coding_index_file = "2019 Locality to 2016 SA2 Coding Index.csv"
+shapefile = "SA2_2021_AUST_GDA2020.shp"
 
 # Want population, education, income
 # Identified age as an important grouping category because young people seem more likely to use afterpay
@@ -34,11 +35,15 @@ def download_shapefile(base_url_shapefile, output_dir, year, stats_area):
     # create folder if it does not exist
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    
-    # retrieving datasets from the new york taxi websit for each month
     url_download = f'{base_url_shapefile}{stats_area}_{year}_AUST_SHP_GDA2020.zip'
     # print(url_download)
-    urlretrieve(url_download, f'{output_dir}/{stats_area}shapefile_{year}.csv')
+    sf_name = f'{stats_area}shapefile_{year}'
+    sf_dir = f'{output_dir}/{sf_name}.zip'
+    urlretrieve(url_download, sf_dir)
+    r = requests.get(url_download)
+    z = zipfile.ZipFile(io.BytesIO(r.content))
+    z.extract(shapefile, path=output_dir)
+    
     
 # download 2016 SA2 to 2021 SA2 correspondence  
 def download_correspondence() :
