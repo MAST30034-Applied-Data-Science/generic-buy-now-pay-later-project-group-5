@@ -39,6 +39,20 @@ incom_stats = personal_income["SA2_CODE_2021","Median_tot_prsnl_inc_weekly", "Me
 external_data = incom_stats.join(edu_age_G01,["SA2_CODE_2021"],"outer")\
                            .join(age_pop_G01,["SA2_CODE_2021"],"outer")
 
+# type cast external data
+
+external_data = external_data.withColumn("Median_tot_prsnl_inc_weekly", data.Median_tot_prsnl_inc_weekly.cast('float'))
+external_data = external_data.withColumn("Median_rent_weekly", data.Median_rent_weekly.cast('float'))
+external_data = external_data.withColumn("Median_mortgage_repay_monthly",data.Median_mortgage_repay_monthly.cast('float'))
+external_data = external_data.withColumn("Median_age_persons",data.Median_age_persons.cast('float'))
+external_data = external_data.withColumn("Median_tot_hhd_inc_weekly",data.Median_tot_hhd_inc_weekly.cast('float'))
+external_data = external_data.withColumn("Average_household_size",data.Average_household_size.cast('float'))
+external_data = external_data.withColumnRenamed("Completed Year 12", "Completed_Year_12")
+external_data = external_data.withColumn("Completed_Year_12",data.Completed_Year_12.cast('float'))
+external_data = external_data.withColumnRenamed("Did Not Attend School", "Did_Not_Attend_School")
+external_data = external_data.withColumn("Did_Not_Attend_School",data.Did_Not_Attend_School.cast('float'))
+external_data = external_data.withColumn("TOT_P_P",data.TOT_P_P.cast('float'))
+
 joined_data = spark.read.parquet('../data/curated/joined_data.parquet')
 
 # converts 2016 SA2 to 2021 SA2
@@ -85,19 +99,7 @@ data = data.withColumn(
     .otherwise(col('SA2_NAME_2021'))
 )
 
-# Cast data types
-
-data = data.withColumn("Median_tot_prsnl_inc_weekly", data.Median_tot_prsnl_inc_weekly.cast('float'))
-data = data.withColumn("Median_rent_weekly", data.Median_rent_weekly.cast('float'))
-data = data.withColumn("Median_mortgage_repay_monthly",data.Median_mortgage_repay_monthly.cast('float'))
-data = data.withColumn("Median_age_persons",data.Median_age_persons.cast('float'))
-data = data.withColumn("Median_tot_hhd_inc_weekly",data.Median_tot_hhd_inc_weekly.cast('float'))
-data = data.withColumn("Average_household_size",data.Average_household_size.cast('float'))
-data = data.withColumnRenamed("Completed Year 12", "Completed_Year_12")
-data = data.withColumn("Completed_Year_12",data.Completed_Year_12.cast('float'))
-data = data.withColumnRenamed("Did Not Attend School", "Did_Not_Attend_School")
-data = data.withColumn("Did_Not_Attend_School",data.Did_Not_Attend_School.cast('float'))
-data = data.withColumn("TOT_P_P",data.TOT_P_P.cast('float'))
+# Mean imputation by state for null postcodes
 
 columns = ["Median_tot_prsnl_inc_weekly", "Median_rent_weekly", "Median_mortgage_repay_monthly", "Median_age_persons", "Median_tot_hhd_inc_weekly",\
            "Average_household_size", "Completed_Year_12", "Did_Not_Attend_School", "TOT_P_P"]
