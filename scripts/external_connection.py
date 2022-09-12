@@ -12,7 +12,7 @@ spark = (
     .config("spark.sql.repl.eagerEval.enabled", True) 
     .config("spark.sql.parquet.cacheMetadata", "true")
     .config("spark.sql.session.timeZone", "Etc/UTC")
-    .config("spark.executor.memory", "2g")
+    .config("spark.executor.memory", "4g")
     .config("spark.driver.memory", "4g")
     .getOrCreate()
 )
