@@ -63,7 +63,7 @@ def download_index():
     z = zipfile.ZipFile(io.BytesIO(r.content))
     z.extract(coding_index_file, path=output_dir)
 
-# download_correspondence()
-# download_index()
-# download_income_file(base_url_income, output_dir, 2021, 'AUS')
+download_correspondence()
+download_index()
+download_income_file(base_url_income, output_dir, 2021, 'AUS')
 download_shapefile(base_url_shapefile, output_dir, 2021, 'SA2')
