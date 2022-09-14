@@ -132,6 +132,12 @@ dmypy.json
 data/curated/
 data/raw/
 data/external/
+data/external/shapefile/
+data/external/shapefile/SA2_2021_AUST_GDA2020.dbf
+data/external/shapefile/SA2_2021_AUST_GDA2020.prj
+data/external/shapefile/SA2_2021_AUST_GDA2020.shp
+data/external/shapefile/SA2_2021_AUST_GDA2020.shx
+data/external/shapefile/SA2_2021_AUST_GDA2020.xml
 
 
 plots/
