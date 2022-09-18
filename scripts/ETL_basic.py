@@ -37,6 +37,15 @@ tbl_merchants = tbl_merchants.withColumn('tags', f.slice(tbl_merchants.tags,1,f.
 tbl_merchants = tbl_merchants.withColumn('take rate', f.regexp_replace('take rate', r'[a-zA-Z: ]', ''))
 tbl_merchants = tbl_merchants.withColumn('revenue level', f.regexp_replace('revenue level', r'[ ]', ''))
 
+
+# Group all transactions and join
+
+all_transactions = transactions.union(transactions2).union(transactions3)
+
+joined_data = all_transactions.join(tbl_merchants,['merchant_abn'],JOIN_TYPE)\
+            .join(cons_user_details, ['user_id'],JOIN_TYPE)\
+            .join(tbl_consumers.withColumnRenamed('name', 'consumer_name'), ['consumer_id'],JOIN_TYPE)
+
 ## Add fraud detection
 
 fraud_merchant_probs = spark.read.csv('../data/tables/merchant_fraud_probability.csv', header = True)
@@ -44,35 +53,47 @@ fraud_merchant_probs = fraud_merchant_probs.withColumnRenamed('fraud_probability
 fraud_consumer_probs = spark.read.csv('../data/tables/consumer_fraud_probability.csv', header = True)
 fraud_consumer_probs = fraud_consumer_probs.withColumnRenamed('fraud_probability', 'consumer_fraud_prob')
 
-all_transactions = transactions.union(transactions2).union(transactions3).withColumn("is_fraud", f.lit(False))
-all_transactions = all_transactions.join(fraud_merchant_probs,['merchant_abn', 'order_datetime'], JOIN_TYPE)
-all_transactions = all_transactions.join(fraud_consumer_probs,['user_id', 'order_datetime'], JOIN_TYPE)
+fraud_consumer = joined_data.groupBy(['user_id', 'order_datetime']).agg(f.count("*").alias("transaction_count"), f.avg("dollar_value").alias("avg_transaction_amt")).withColumn("is_fraud", f.lit(False))
+fraud_merchant = joined_data.groupBy(['merchant_abn', 'order_datetime']).agg(f.count("*").alias("transaction_count"), f.avg("dollar_value").alias("avg_transaction_amt")).withColumn("is_fraud", f.lit(False))
+fraud_merchant = fraud_merchant.join(fraud_merchant_probs,['merchant_abn', 'order_datetime'], JOIN_TYPE)
+fraud_consumer = fraud_consumer.join(fraud_consumer_probs,['user_id', 'order_datetime'], JOIN_TYPE)
 
 # Combine so only the one probability
 
-all_transactions = all_transactions.withColumn("fraud_probability",\
-                                        f.when(f.col('merchant_fraud_prob').isNotNull(), f.col("merchant_fraud_prob"))\
-                                         .when(f.col('consumer_fraud_prob').isNotNull(), f.col("consumer_fraud_prob")))\
-                                   .drop("merchant_fraud_prob").drop("consumer_fraud_prob")
+fraud_merchant = fraud_merchant.withColumn("fraud_probability",\
+                                        f.when(f.col('merchant_fraud_prob').isNotNull(), f.col("merchant_fraud_prob")))\
+                                        .drop("merchant_fraud_prob")
+fraud_consumer = fraud_consumer.withColumn("fraud_probability",\
+                                        f.when(f.col('consumer_fraud_prob').isNotNull(), f.col("consumer_fraud_prob")))\
+                                        .drop("consumer_fraud_prob")
 
 # Add new field denoting fraud
 
-transactions = all_transactions.withColumn("is_fraud",\
+fraud_merchant = fraud_merchant.withColumn("is_fraud",\
+                                              f.when(f.col("fraud_probability").isNotNull(), True)\
+                                               .when(f.col("fraud_probability").isNull(), False))
+
+fraud_consumer = fraud_consumer.withColumn("is_fraud",\
                                               f.when(f.col("fraud_probability").isNotNull(), True)\
                                                .when(f.col("fraud_probability").isNull(), False))
 
 # Impute non-fraud values as having 0.01 probaility of fraud
 
-transactions_full = transactions.withColumn("fraud_probability",\
+fraud_merchant = fraud_merchant.withColumn("fraud_probability",\
+                                           f.when(~ f.col('is_fraud'), 0.01)\
+                                            .when(f.col('is_fraud'), f.col('fraud_probability')))
+fraud_consumer = fraud_consumer.withColumn("fraud_probability",\
                                            f.when(~ f.col('is_fraud'), 0.01)\
                                             .when(f.col('is_fraud'), f.col('fraud_probability')))
 
-# Join all the arrays together
+joined_data.show(1, vertical = True, truncate = False)
+fraud_merchant.show(1, vertical = True, truncate = False)
+fraud_consumer.show(1, vertical = True, truncate = False)
 
-joined_data = transactions_full.join(tbl_merchants,['merchant_abn'],JOIN_TYPE)\
-            .join(cons_user_details, ['user_id'],JOIN_TYPE)\
-            .join(tbl_consumers.withColumnRenamed('name', 'consumer_name'), ['consumer_id'],JOIN_TYPE)
+# Write the relevant files
 
-joined_data.show(10, vertical = True, truncate = False)
+fraud_merchant.write.mode('overwrite').parquet('../data/curated/merchant_fraud.parquet')
+
+fraud_consumer.write.mode('overwrite').parquet('../data/curated/consumer_fraud.parquet')
     
 joined_data.write.mode('overwrite').parquet('../data/curated/joined_data.parquet')
