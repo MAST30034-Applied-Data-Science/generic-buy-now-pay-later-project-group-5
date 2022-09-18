@@ -131,15 +131,23 @@ dmypy.json
 # data
 data/curated/
 data/raw/
+data/external/
+data/external/shapefile/
+data/external/shapefile/SA2_2021_AUST_GDA2020.dbf
+data/external/shapefile/SA2_2021_AUST_GDA2020.prj
+data/external/shapefile/SA2_2021_AUST_GDA2020.shp
+data/external/shapefile/SA2_2021_AUST_GDA2020.shx
+data/external/shapefile/SA2_2021_AUST_GDA2020.xml
+
 
 plots/
 
 # OSX .DS_Store file
 .DS_Store
-data/tables/AUS_2021.zip
 *.csv
 *.zip
 *.xlsx
+
 data/external/Readme/2021AboutDatapacks_readme.txt
 data/external/Readme/mapinfo_Shp_readme.txt
 data/external/Readme/esri_arcmap_readme.txt
