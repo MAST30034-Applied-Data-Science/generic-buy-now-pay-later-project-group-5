@@ -133,11 +133,6 @@ data/curated/
 data/raw/
 data/external/
 data/external/shapefile/
-data/external/shapefile/SA2_2021_AUST_GDA2020.dbf
-data/external/shapefile/SA2_2021_AUST_GDA2020.prj
-data/external/shapefile/SA2_2021_AUST_GDA2020.shp
-data/external/shapefile/SA2_2021_AUST_GDA2020.shx
-data/external/shapefile/SA2_2021_AUST_GDA2020.xml
 
 
 plots/
@@ -154,3 +149,8 @@ data/external/Readme/esri_arcmap_readme.txt
 data/external/Readme/CreativeCommons_Licensing_readme.txt
 data/external/Readme/2021POA_readme.txt
 data/external/Readme/2021Formats_readme.txt
+data/external/shapefile/SA2_2021_AUST_GDA2020.xml
+data/external/shapefile/SA2_2021_AUST_GDA2020.shx
+data/external/shapefile/SA2_2021_AUST_GDA2020.shp
+data/external/shapefile/SA2_2021_AUST_GDA2020.prj
+data/external/shapefile/SA2_2021_AUST_GDA2020.dbf
