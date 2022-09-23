@@ -46,15 +46,21 @@ joined_data = all_transactions.join(tbl_merchants,['merchant_abn'],JOIN_TYPE)\
             .join(cons_user_details, ['user_id'],JOIN_TYPE)\
             .join(tbl_consumers.withColumnRenamed('name', 'consumer_name'), ['consumer_id'],JOIN_TYPE)
 
-## Add fraud detection
-
+"""
+Add fraud detection
+rename fraud_probability columns from fraud merchant and fraud consumer into merchang_fraud_prob and cosumer_fraud_prob
+"""
 fraud_merchant_probs = spark.read.csv('../data/tables/merchant_fraud_probability.csv', header = True)
 fraud_merchant_probs = fraud_merchant_probs.withColumnRenamed('fraud_probability', 'merchant_fraud_prob')
 fraud_consumer_probs = spark.read.csv('../data/tables/consumer_fraud_probability.csv', header = True)
 fraud_consumer_probs = fraud_consumer_probs.withColumnRenamed('fraud_probability', 'consumer_fraud_prob')
 
+
+#create new feature transaction_count for both the fraud consumer and fraud merchant
 fraud_consumer = joined_data.groupBy(['user_id', 'order_datetime']).agg(f.count("*").alias("transaction_count"), f.avg("dollar_value").alias("avg_transaction_amt")).withColumn("is_fraud", f.lit(False))
 fraud_merchant = joined_data.groupBy(['merchant_abn', 'order_datetime']).agg(f.count("*").alias("transaction_count"), f.avg("dollar_value").alias("avg_transaction_amt")).withColumn("is_fraud", f.lit(False))
+
+# left join the fraud probability for merchant data and consumer data with selected columns
 fraud_merchant = fraud_merchant.join(fraud_merchant_probs,['merchant_abn', 'order_datetime'], JOIN_TYPE)
 fraud_consumer = fraud_consumer.join(fraud_consumer_probs,['user_id', 'order_datetime'], JOIN_TYPE)
 
