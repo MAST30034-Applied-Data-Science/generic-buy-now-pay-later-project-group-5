@@ -61,6 +61,7 @@ correspondence = spark.read.csv('../data/external/sa2_correspondence.csv', heade
 # converts postcodes to 2016 SA2
 index = spark.read.csv('../data/external/2019 Locality to 2016 SA2 Coding Index.csv', header = True)
 index = index.groupby("postcode", "SA2_MAINCODE").count()
+index = index.withColumn("postcode",index.postcode.cast('int'))
 
 w = Window.partitionBy('postcode')
 index = index.withColumn('maxCount', F.max('count').over(w))\
@@ -69,6 +70,9 @@ index = index.withColumn('maxCount', F.max('count').over(w))\
 
 # make appropriate conversions
 joined_data_sa2 = joined_data.join(index,['postcode'],"left")
+
+print(joined_data_sa2.where(joined_data_sa2.postcode == 820))
+
 df_sa2 = joined_data_sa2.join(correspondence,correspondence.SA2_MAINCODE_2016 == joined_data_sa2.SA2_MAINCODE, "left")
 
 # drop unecessary columns
