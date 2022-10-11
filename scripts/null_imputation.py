@@ -64,5 +64,7 @@ for column in columns:
         .when( (col('SA2_NAME_2021') == 'New South Wales'), data.groupBy('state').mean(column).collect()[7][1])\
         .otherwise(col(column))
 )
+
+print(data.where(data.postcode == 820))
     
 data.write.mode('overwrite').parquet('../data/curated/final_data.parquet')

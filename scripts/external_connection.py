@@ -71,8 +71,6 @@ index = index.withColumn('maxCount', F.max('count').over(w))\
 # make appropriate conversions
 joined_data_sa2 = joined_data.join(index,['postcode'],"left")
 
-print(joined_data_sa2.where(joined_data_sa2.postcode == 820))
-
 df_sa2 = joined_data_sa2.join(correspondence,correspondence.SA2_MAINCODE_2016 == joined_data_sa2.SA2_MAINCODE, "left")
 
 # drop unecessary columns
