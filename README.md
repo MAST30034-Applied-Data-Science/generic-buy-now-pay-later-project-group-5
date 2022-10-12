@@ -12,9 +12,16 @@ Group members:
 
 # Pipeline
 1. `download.py`: Downloads external datasets
+    - requires argument --output: the path from current directory to the desired output file (the external data folder)
+    
 2. `ETL_basic.py`: Performs ETL on transaction and merchant data (Output: `joined_data.parquet`, `consumer_fraud.parquet`, `merchant_fraud.parquet`)
+    - requires argument --curatedpath: that path from current directory to the curated folder & --tablespath: the path from current directory to the tables folder
+
 3. `external_connection.py`: Joins data with external datasets (Input: `joined_data.parquet`, Output: `external_data.parquet`, `external_joined_data.parquet`)
+    - requires argument --curatedpath: that path from current directory to the curated folder & --externalpath: the path from current directory to the external folder
+
 4. `null_imputation.py`: Performs imputation on null values (Input: `external_joined_data.parquet`,  Output: `final_data.parquet`)
+    - requires argument --curatedpath: the path from current directory to the curated folder
 
 5. `analysis.ipynb`: Performs outlier removal and analysis (Input: `final_data.parquet`,  `external_data.parquet`,  Output: `cleaned_data.parquet`)
 

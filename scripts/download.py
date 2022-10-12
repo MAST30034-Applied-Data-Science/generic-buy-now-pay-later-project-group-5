@@ -3,9 +3,8 @@ import os
 import certifi
 certifi.where()
 import requests, zipfile, io
+import argparse
 
-# setting directoray for downloading datasets
-output_dir = '../data/external'
 # base url where the HVFHV datasets are from
 base_url_income = "https://www.abs.gov.au/census/find-census-data/datapacks/download/"
 base_url_shapefile = "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/digital-boundary-files/"
@@ -50,20 +49,29 @@ def download_shapefile(base_url_shapefile, output_dir, year, stats_area):
     
     
 # download 2016 SA2 to 2021 SA2 correspondence  
-def download_correspondence() :
+def download_correspondence(output_dir) :
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     urlretrieve(url_sa2_correspondence, f'{output_dir}/sa2_correspondence.csv')
 
 # download coding index for postcode to SA2 conversion
-def download_index():
+def download_index(output_dir):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     r = requests.get(url_coding_index)
     z = zipfile.ZipFile(io.BytesIO(r.content))
     z.extract(coding_index_file, path=output_dir)
 
-download_correspondence()
-download_index()
-download_income_file(base_url_income, output_dir, 2021, 'AUS')
-download_shapefile(base_url_shapefile, output_dir, 2021, 'SA2')
+def main(): 
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--output', help = 'the desired output file for data',type = str)
+    args = parser.parse_args()
+
+    download_correspondence(args.output)
+    download_index(args.output)
+    download_income_file(base_url_income, args.output, 2021, 'AUS')
+    download_shapefile(base_url_shapefile, args.output, 2021, 'SA2')
+
+if __name__ == "__main__":
+    main()
